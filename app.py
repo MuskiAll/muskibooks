@@ -2,14 +2,14 @@ from flask import Flask, render_template, request, redirect, session
 from pushbullet import Pushbullet
 
 app = Flask(__name__)
-app.secret_key = 'sua_chave_secreta_aqui'  # Defina uma chave secreta para uso na sessão
+app.secret_key = 'muskibooks-secretkey'  # Defina uma chave secreta para uso na sessão
 
 books = []
 purchased_books = set()
 
 users = []
 
-pb = Pushbullet('seu_token_pushbullet')
+pb = Pushbullet('o.426seWO5AGJMjxIeSqdMzbdXERr0aY86')
 
 # Rota de login
 @app.route('/login', methods=['GET', 'POST'])
@@ -113,7 +113,9 @@ def purchase(book_id):
     book = next((book for book in books if book['id'] == book_id), None)
     if not book:
         return redirect('/')
-
+    
+    
+    
     if book['payment_received'].get(session.get('username'), False):
         return redirect('/books/' + str(book_id) + '/read')
 
@@ -137,14 +139,12 @@ def payment_confirmation():
         if all(received for received in book['payment_received'].values()):
             purchased_books.add(book_id)
 
-        push_notification(username, book['title'])
-
     return redirect('/books/' + str(book_id) + '/read')
 
 # Função para enviar notificação via Pushbullet
 def push_notification(username, book_title):
     push_title = 'Pagamento Recebido'
-    push_message = f'O usuário {username} fez o pagamento e pode acessar o livro "{book_title}".'
+    push_message = f'O usuário {username} fez o pagamento e pode acessar o livro "{book_title}"? Verifique se o pagamento foi recebido e acesse o site mrbarbecue7127.github.io/admin para permitir ou negar.'
 
     pb.push_note(push_title, push_message)
 
